@@ -1,4 +1,14 @@
-set nu    " Number lines
+" The following lines make the cursor work
+" on hybrid mode when in normal mode and
+" absolute line number in insert mode.
+:set number relativenumber
+
+:augroup numbertoggle
+:  autocmd!
+:  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+:  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+:augroup END
+
 set ruler " Show cursor line anc column in status line
 syntax enable
 set expandtab
@@ -22,13 +32,19 @@ Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'qpkorr/vim-bufkill'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'zchee/deoplete-jedi'
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
 
 " Always keep 5 lines from bottom/top
 set scrolloff=5
-
+" for deoplete you also have to install via pip3 neovim and yapf
+" and point python3_host_prog to your python3
+let g:python3_host_prog='/opt/local/bin/python3.5'
+let g:deoplete#enable_at_startup = 1
 
 " Search options
 set incsearch
@@ -36,6 +52,7 @@ set ignorecase
 set smartcase
 set hlsearch
 
+" Blink words when going for next
 " This unsets the "last search pattern" register by hitting return
 nnoremap <CR> :nohlsearch<CR><CR>
 
@@ -65,6 +82,22 @@ nnoremap <C-P> :bprev<CR>
 syntax on
 colorscheme onedark
 
+nnoremap <silent> n n:call HLNext(0.2)<CR>
+nnoremap <silent> N N:call HLNext(0.2)<CR>
+highlight WhiteOnRed ctermbg=red ctermfg=white
+
+function! HLNext (blinktime)
+    let [bufnum, lnum, col, off] = getpos('.')
+    let matchlen = strlen(matchstr(strpart(getline('.'), col-1),@/))
+    let target_pat = '\c\%#\%('.@/.'\)'
+    let ring = matchadd('WhiteOnRed', target_pat, 101)
+    redraw
+    exec 'sleep ' . float2nr(a:blinktime * 1000) . 'm'
+    call matchdelete(ring)
+    redraw
+endfunction
+
+
 " Startify options
 let g:startify_bookmarks = ['~/.config/nvim/init.vim', '~/Dropbox/Thesis']
 let g:startify_change_to_dir = 1
@@ -76,3 +109,4 @@ let g:startify_relative_path = 1
 " How to disable wrap per file
 " Edit  $VIMRUNTIME/ftplugin/filetypename.vim
 " In that file write towards the end:setlocal wrap
+

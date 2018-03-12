@@ -47,4 +47,5 @@ Use the named registers to avoid your cut text from being overriden by a rando d
 
 ### Other
 - Open a terminal with: `:terminal`
+- Insert in block mode: C-v to take you to block v-mode. Select the first column, shift-I to go to insert mode. Add space then ESC
 
