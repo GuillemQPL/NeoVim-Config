@@ -35,6 +35,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'qpkorr/vim-bufkill'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-jedi'
+Plug 'ambv/black'
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
@@ -45,6 +46,11 @@ set scrolloff=5
 " and point python3_host_prog to your python3
 let g:python3_host_prog='/opt/local/bin/python3.5'
 let g:deoplete#enable_at_startup = 1
+" Big libraries take some time to get cached
+let g:deoplete#sources#jedi#server_timeout=30
+
+" Close preview window of deoplete automatically
+autocmd CompleteDone * pclose
 
 " Search options
 set incsearch
@@ -105,6 +111,15 @@ let g:startify_relative_path = 1
 
 " Escape terminal key with ESC
 :tnoremap <Esc> <C-\><C-n>
+
+" TrimWhiteSpace easily
+fun! TrimWhiteSpace()
+    let l:save = winsaveview()
+    %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+
+command! TrimWhiteSpace call TrimWhiteSpace()
 
 " How to disable wrap per file
 " Edit  $VIMRUNTIME/ftplugin/filetypename.vim
